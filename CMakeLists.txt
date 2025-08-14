@@ -92,6 +92,9 @@ if(BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
+# Add examples
+add_subdirectory(examples)
+
 # Print build summary
 message(STATUS "")
 message(STATUS "========== Core Utils Build Configuration ==========")
