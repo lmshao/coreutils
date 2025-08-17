@@ -1,11 +1,6 @@
 /**
  * @author SHAO Liming <lmshao@163.com>
- * @copyright Copyright (c)    size_t capacity_;
-};
-
-} // namespace lmshao
-
-#endif // LMSHAO_CORE_UTILS_DATA_BUFFER_H2025 SHAO Liming
+ * @copyright Copyright (c) 2025 SHAO Liming
  * @license MIT
  *
  * SPDX-License-Identifier: MIT
@@ -19,7 +14,7 @@
 #include <memory>
 #include <string>
 
-namespace lmshao {
+namespace lmshao::coreutils {
 class DataBuffer {
 public:
     explicit DataBuffer(size_t len = 0);
@@ -77,6 +72,6 @@ private:
     size_t capacity_ = 0;
 };
 
-} // namespace lmshao
+} // namespace lmshao::coreutils
 
 #endif // LMSHAO_CORE_UTILS_DATA_BUFFER_H

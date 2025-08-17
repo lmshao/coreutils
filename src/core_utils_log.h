@@ -15,7 +15,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace lmshao {
+namespace lmshao::coreutils {
 
 #ifdef _WIN32
 #define COLOR_RED ""
@@ -73,6 +73,6 @@ namespace lmshao {
            FUNC_NAME_, ##__VA_ARGS__)
 #endif
 
-} // namespace lmshao
+} // namespace lmshao::coreutils
 
 #endif // LMSHAO_CORE_UTILS_LOG_H

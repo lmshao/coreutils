@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(coreutils VERSION 0.1.0 LANGUAGES CXX)
+project(coreutils VERSION 0.1.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 # C++ standard
@@ -67,7 +67,11 @@ endif()
 # Shared library
 if(BUILD_SHARED_LIBS)
     add_library(${PROJECT_NAME}-shared SHARED ${SOURCE_FILES})
-    set_target_properties(${PROJECT_NAME}-shared PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+    set_target_properties(${PROJECT_NAME}-shared PROPERTIES
+        OUTPUT_NAME ${PROJECT_NAME}
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+    )
     target_include_directories(${PROJECT_NAME}-shared PUBLIC 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
@@ -76,7 +80,7 @@ if(BUILD_SHARED_LIBS)
 
     # Create alias for shared library
     add_library(${PROJECT_NAME}::shared ALIAS ${PROJECT_NAME}-shared)
-    message(STATUS "Building shared library: lib${PROJECT_NAME}.so")
+    message(STATUS "Building shared library: lib${PROJECT_NAME}.so.${PROJECT_VERSION}")
 endif()
 
 # Create a default alias (prefer static for tests)

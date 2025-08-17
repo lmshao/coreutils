@@ -13,7 +13,7 @@
 
 #include "core_utils_log.h"
 
-namespace lmshao {
+namespace lmshao::coreutils {
 
 AsyncTimer::AsyncTimer(int threadPoolSize)
 {
@@ -258,4 +258,4 @@ size_t AsyncTimer::GetThreadPoolThreadCount() const
     return threadPool_ ? threadPool_->GetThreadCount() : 0;
 }
 
-} // namespace lmshao
+} // namespace lmshao::coreutils

@@ -13,7 +13,7 @@
 #include "../test_framework.h"
 #include "task_queue.h"
 
-using namespace lmshao;
+using namespace lmshao::coreutils;
 
 TEST(TaskQueueTest, Construction)
 {

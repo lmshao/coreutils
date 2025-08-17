@@ -21,7 +21,7 @@
 #include <unordered_set>
 #include <vector>
 
-namespace lmshao {
+namespace lmshao::coreutils {
 constexpr int THREAD_NUM_MAX = 2;
 constexpr int THREAD_NUM_PRE_ALLOC = 1;
 
@@ -92,6 +92,6 @@ private:
     std::stack<std::shared_ptr<TaskItem>> taskItemPool_;
 };
 
-} // namespace lmshao
+} // namespace lmshao::coreutils
 
 #endif // LMSHAO_CORE_UTILS_THREAD_POOL_H

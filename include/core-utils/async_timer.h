@@ -21,7 +21,7 @@
 
 #include "thread_pool.h"
 
-namespace lmshao {
+namespace lmshao::coreutils {
 
 class AsyncTimer {
 public:
@@ -139,6 +139,6 @@ private:
     std::unique_ptr<ThreadPool> threadPool_;
 };
 
-} // namespace lmshao
+} // namespace lmshao::coreutils
 
 #endif // LMSHAO_CORE_UTILS_ASYNC_TIMER_H

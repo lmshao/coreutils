@@ -14,7 +14,7 @@
 
 #include "noncopyable.h"
 
-namespace lmshao {
+namespace lmshao::coreutils {
 template <typename T>
 class Singleton : public NonCopyable {
 public:
@@ -55,6 +55,6 @@ void Singleton<T>::DestroyInstance()
     }
 }
 
-} // namespace lmshao
+} // namespace lmshao::coreutils
 
 #endif // LMSHAO_CORE_UTILS_SINGLETON_H

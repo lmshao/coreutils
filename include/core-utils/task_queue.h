@@ -23,7 +23,7 @@
 #include <unistd.h>
 #endif
 
-namespace lmshao {
+namespace lmshao::coreutils {
 class TaskQueue;
 template <typename T>
 class TaskHandler;
@@ -198,6 +198,6 @@ private:
     bool isTaskExecuting_ = false;
 };
 
-} // namespace lmshao
+} // namespace lmshao::coreutils
 
 #endif // LMSHAO_CORE_UTILS_TASK_QUEUE_H

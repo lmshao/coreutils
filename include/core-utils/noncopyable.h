@@ -9,7 +9,7 @@
 #ifndef LMSHAO_CORE_UTILS_NONCOPYABLE_H
 #define LMSHAO_CORE_UTILS_NONCOPYABLE_H
 
-namespace lmshao {
+namespace lmshao::coreutils {
 class NonCopyable {
 protected:
     NonCopyable() = default;
@@ -22,6 +22,6 @@ public:
     NonCopyable &operator=(NonCopyable &&) = delete;
 };
 
-} // namespace lmshao
+} // namespace lmshao::coreutils
 
 #endif // LMSHAO_CORE_UTILS_NONCOPYABLE_H

@@ -13,7 +13,7 @@
 
 #include "async_timer.h"
 
-using namespace lmshao;
+using namespace lmshao::coreutils;
 
 int main()
 {

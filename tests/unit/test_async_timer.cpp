@@ -14,7 +14,7 @@
 #include "../test_framework.h"
 #include "async_timer.h"
 
-using namespace lmshao;
+using namespace lmshao::coreutils;
 
 TEST(AsyncTimerTest, StartAndStop)
 {

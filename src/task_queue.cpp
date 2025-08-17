@@ -22,7 +22,7 @@
 
 #include "core_utils_log.h"
 
-namespace lmshao {
+namespace lmshao::coreutils {
 TaskQueue::~TaskQueue()
 {
     (void)Stop();
@@ -195,4 +195,4 @@ bool TaskQueue::IsTaskExecuting()
     return isTaskExecuting_;
 }
 
-} // namespace lmshao
+} // namespace lmshao::coreutils

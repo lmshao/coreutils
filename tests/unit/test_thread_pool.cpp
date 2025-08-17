@@ -15,7 +15,7 @@
 #include "../test_framework.h"
 #include "thread_pool.h"
 
-using namespace lmshao;
+using namespace lmshao::coreutils;
 
 TEST(ThreadPoolTest, BasicConstruction)
 {
