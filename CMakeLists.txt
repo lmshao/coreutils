@@ -10,9 +10,9 @@ option(BUILD_STATIC_LIBS "Build static libraries" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_TESTS "Build tests" ON)
 
-# Set default build type to Release if not specified
+# Set default build type to Debug if not specified
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
+    set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 # Include directories
@@ -44,9 +44,8 @@ if(WIN32)
     # Windows socket libraries
     set(PLATFORM_LIBS ws2_32 wsock32)
 else()
-    # Unix/Linux libraries
-    find_package(Threads REQUIRED)
-    set(PLATFORM_LIBS Threads::Threads)
+    # Unix/Linux libraries - use pthread directly
+    set(PLATFORM_LIBS pthread)
 endif()
 
 # Static library

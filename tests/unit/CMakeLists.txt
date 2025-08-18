@@ -23,3 +23,9 @@ add_executable(test_async_timer test_async_timer.cpp)
 target_link_libraries(test_async_timer coreutils ${PLATFORM_LIBS})
 add_test(NAME AsyncTimerTests COMMAND $<TARGET_FILE:test_async_timer>)
 set_tests_properties(AsyncTimerTests PROPERTIES LABELS "unit")
+
+# ObjectPool unit tests
+add_executable(test_object_pool test_object_pool.cpp)
+target_link_libraries(test_object_pool coreutils ${PLATFORM_LIBS})
+add_test(NAME ObjectPoolTests COMMAND $<TARGET_FILE:test_object_pool>)
+set_tests_properties(ObjectPoolTests PROPERTIES LABELS "unit")

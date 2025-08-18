@@ -223,7 +223,7 @@ void AsyncTimer::ExecuteExpiredTimers()
             auto wrappedCallback = [task]() {
                 if (!task->isCancelled) {
                     task->callback();
-                    COREUTILS_LOGD("Executed timer %llu asynchronously", task->id);
+                    COREUTILS_LOGD("Executed timer %lu asynchronously", task->id);
                 }
             };
 
@@ -237,7 +237,7 @@ void AsyncTimer::ExecuteExpiredTimers()
         if (!task->isCancelled && task->isRepeating) {
             task->nextExecutionTime = now + task->interval;
             timerTasks_.emplace(task->nextExecutionTime, task);
-            COREUTILS_LOGD("Rescheduled repeating timer %llu", task->id);
+            COREUTILS_LOGD("Rescheduled repeating timer %lu", task->id);
         } else if (!task->isRepeating) {
             // Remove one-time timer from map
             timerMap_.erase(task->id);
