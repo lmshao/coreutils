@@ -147,13 +147,19 @@ private:
         }
     }
 
-    ObjectFactory factory_;   // Function to create new objects
-    ObjectResetter resetter_; // Function to reset object state
-    ObjectDeleter deleter_;   // Function to delete objects
-    size_t maxPoolSize_;      // Maximum pool size
+    /// @brief Function to create new objects.
+    ObjectFactory factory_;
+    /// @brief Function to reset object state.
+    ObjectResetter resetter_;
+    /// @brief Function to delete objects.
+    ObjectDeleter deleter_;
+    /// @brief Maximum pool size.
+    size_t maxPoolSize_;
 
-    mutable std::mutex mutex_; // Mutex for thread safety
-    std::vector<T *> pool_;    // Pool of available objects
+    /// @brief Mutex for thread safety.
+    mutable std::mutex mutex_;
+    /// @brief Pool of available objects.
+    std::vector<T *> pool_;
 };
 
 /**
@@ -199,7 +205,9 @@ public:
     void Clear() { pool_->Clear(); }
 
 private:
+    /// @brief Default size for new DataBuffer objects.
     size_t defaultSize_;
+    /// @brief The underlying object pool.
     std::unique_ptr<ObjectPool<DataBuffer>> pool_;
 };
 

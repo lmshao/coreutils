@@ -16,7 +16,7 @@
 #include <string>
 
 #include "../test_framework.h"
-#include "data_buffer.h"
+#include "coreutils/data_buffer.h"
 
 using namespace lmshao::coreutils;
 

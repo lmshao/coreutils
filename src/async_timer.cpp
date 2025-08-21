@@ -6,9 +6,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "async_timer.h"
+#include "coreutils/async_timer.h"
 
-#include <algorithm>
 #include <chrono>
 
 #include "core_utils_log.h"

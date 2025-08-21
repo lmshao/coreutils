@@ -16,7 +16,6 @@
 #include <map>
 #include <memory>
 #include <mutex>
-#include <string>
 #include <thread>
 
 #include "thread_pool.h"
@@ -35,6 +34,10 @@ public:
      * @param threadPoolSize Maximum number of threads in the thread pool (default: 4)
      */
     explicit AsyncTimer(int threadPoolSize = 4);
+
+    /**
+     * @brief Destructor.
+     */
     ~AsyncTimer();
 
     /**
@@ -103,6 +106,9 @@ public:
     size_t GetThreadPoolThreadCount() const;
 
 private:
+    /**
+     * @brief Internal structure representing a timer task.
+     */
     struct TimerTask {
         TimerId id;
         TimerCallback callback;
@@ -118,9 +124,26 @@ private:
         }
     };
 
+    /**
+     * @brief The main worker function that processes timers.
+     */
     void TimerWorker();
+
+    /**
+     * @brief Generates a unique timer ID.
+     * @return A new timer ID.
+     */
     TimerId GenerateTimerId();
+
+    /**
+     * @brief Executes any timers that have expired.
+     */
     void ExecuteExpiredTimers();
+
+    /**
+     * @brief Gets the execution time of the next scheduled timer.
+     * @return The next execution time point.
+     */
     TimePoint GetNextExecutionTime() const;
 
     std::atomic<bool> running_{false};

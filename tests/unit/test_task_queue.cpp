@@ -11,7 +11,7 @@
 #include <thread>
 
 #include "../test_framework.h"
-#include "task_queue.h"
+#include "coreutils/task_queue.h"
 
 using namespace lmshao::coreutils;
 

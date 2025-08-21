@@ -1,5 +1,4 @@
 /**
- * @file task_queue.cpp
  * @brief Task Queue Implementation
  * @author SHAO Liming <lmshao@163.com>
  * @copyright Copyright (c) 2024-2025 SHAO Liming
@@ -8,7 +7,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "task_queue.h"
+#include "coreutils/task_queue.h"
 
 #ifdef _WIN32
 #include <processthreadsapi.h>

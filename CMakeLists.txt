@@ -5,6 +5,9 @@ project(coreutils VERSION 0.1.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Export compile commands for tools like clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Build options
 option(BUILD_STATIC_LIBS "Build static libraries" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
@@ -55,7 +58,7 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 # Source files and include directories
-include_directories(${PROJECT_SOURCE_DIR}/include/coreutils)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
 # Collect source files

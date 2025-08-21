@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "../test_framework.h"
-#include "thread_pool.h"
+#include "coreutils/thread_pool.h"
 
 using namespace lmshao::coreutils;
 

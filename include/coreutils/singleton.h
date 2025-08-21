@@ -18,12 +18,21 @@ namespace lmshao::coreutils {
 template <typename T>
 class Singleton : public NonCopyable {
 public:
+    /**
+     * @brief Get the singleton instance.
+     * @return A shared pointer to the singleton instance.
+     */
     static std::shared_ptr<T> GetInstance();
+    /**
+     * @brief Destroy the singleton instance.
+     */
     static void DestroyInstance();
 
 protected:
 private:
+    /// @brief The singleton instance.
     static std::shared_ptr<T> instance_;
+    /// @brief Mutex for thread-safe initialization.
     static std::mutex mutex_;
 };
 

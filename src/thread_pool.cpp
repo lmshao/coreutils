@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "thread_pool.h"
+#include "coreutils/thread_pool.h"
 
 #include <string>
 #include <utility>

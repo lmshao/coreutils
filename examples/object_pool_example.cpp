@@ -9,8 +9,8 @@
 #include <iostream>
 #include <string>
 
-#include "data_buffer.h"
-#include "object_pool.h"
+#include "coreutils/data_buffer.h"
+#include "coreutils/object_pool.h"
 
 using namespace lmshao::coreutils;
 
