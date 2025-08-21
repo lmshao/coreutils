@@ -1,22 +1,61 @@
 cmake_minimum_required(VERSION 3.10)
 project(coreutils VERSION 0.1.1 LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 17)
 
 # C++ standard
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Build options
 option(BUILD_STATIC_LIBS "Build static libraries" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_TESTS "Build tests" ON)
+option(INSTALL_TO_USER_LOCAL "Install to ~/.local instead of system-wide" OFF)
 
-# Set default build type to Debug if not specified
+# Set default build type to Release if not specified
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_BUILD_TYPE Release)
 endif()
 
-# Include directories
-include_directories(${PROJECT_SOURCE_DIR}/include/core-utils)
+# Display configuration options for developers
+message(STATUS "")
+message(STATUS "========== Core Utils Configuration Options ==========")
+message(STATUS "")
+message(STATUS "Build Type Configuration:")
+message(STATUS "  Current build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "  Available types: Debug, Release, RelWithDebInfo, MinSizeRel")
+message(STATUS "  Change with: cmake -DCMAKE_BUILD_TYPE=Debug ..")
+message(STATUS "")
+message(STATUS "Library Build Options:")
+message(STATUS "  BUILD_STATIC_LIBS: Build static libraries (current: ${BUILD_STATIC_LIBS})")
+message(STATUS "  BUILD_SHARED_LIBS: Build shared libraries (current: ${BUILD_SHARED_LIBS})")
+message(STATUS "  BUILD_TESTS: Build unit tests (current: ${BUILD_TESTS})")
+message(STATUS "")
+message(STATUS "Installation Options:")
+message(STATUS "  CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "  INSTALL_TO_USER_LOCAL: Install to ~/.local (current: ${INSTALL_TO_USER_LOCAL})")
+message(STATUS "")
+message(STATUS "Usage Examples:")
+message(STATUS "  Debug build:     cmake -DCMAKE_BUILD_TYPE=Debug ..")
+message(STATUS "  User install:    cmake -DINSTALL_TO_USER_LOCAL=ON ..")
+message(STATUS "  Custom prefix:   cmake -DCMAKE_INSTALL_PREFIX=/opt/coreutils ..")
+message(STATUS "  Tests only:      cmake -DBUILD_STATIC_LIBS=OFF -DBUILD_SHARED_LIBS=OFF ..")
+message(STATUS "")
+message(STATUS "========================================================")
+
+# Handle user-local installation
+if(INSTALL_TO_USER_LOCAL AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.local" CACHE PATH "User local install path" FORCE)
+    message(STATUS "Installing to user directory: ${CMAKE_INSTALL_PREFIX}")
+endif()
+
+# Provide install path information to users
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    message(STATUS "Using default install prefix: ${CMAKE_INSTALL_PREFIX}")
+    message(STATUS "You can customize it with: cmake -DCMAKE_INSTALL_PREFIX=/your/path ..")
+endif()
+
+# Source files and include directories
+include_directories(${PROJECT_SOURCE_DIR}/include/coreutils)
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
 # Collect source files
@@ -37,6 +76,9 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -DDEBUG")
     # Release-specific flags for GCC/Clang
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -DRELEASE")
+    
+    # Enable position independent code for shared library compatibility
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 # Platform-specific libraries
@@ -89,14 +131,81 @@ else()
     add_library(${PROJECT_NAME} ALIAS ${PROJECT_NAME}-shared)
 endif()
 
-# Add subdirectories
+# Add subdirectories (only for development, not installed)
 if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
 
-# Add examples
+# Add examples (only for development, not installed)
 add_subdirectory(examples)
+
+# Install and export functionality (Unix/Linux only)
+if(NOT WIN32)
+    # Install headers
+    install(DIRECTORY include/ DESTINATION include
+        FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
+    # Install libraries and create export targets
+    set(INSTALL_TARGETS)
+    if(BUILD_STATIC_LIBS)
+        list(APPEND INSTALL_TARGETS ${PROJECT_NAME}-static)
+    endif()
+    if(BUILD_SHARED_LIBS)
+        list(APPEND INSTALL_TARGETS ${PROJECT_NAME}-shared)
+    endif()
+
+    if(INSTALL_TARGETS)
+        install(TARGETS ${INSTALL_TARGETS}
+            EXPORT coreutilsTargets
+            ARCHIVE DESTINATION lib
+            LIBRARY DESTINATION lib
+            RUNTIME DESTINATION bin
+            INCLUDES DESTINATION include
+        )
+    endif()
+
+    # Export targets for find_package
+    install(EXPORT coreutilsTargets
+        FILE coreutilsTargets.cmake
+        NAMESPACE coreutils::
+        DESTINATION lib/cmake/coreutils
+    )
+
+    # Create and install config files
+    include(CMakePackageConfigHelpers)
+    configure_package_config_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/coreutilsConfig.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/coreutilsConfig.cmake"
+        INSTALL_DESTINATION lib/cmake/coreutils
+    )
+
+    write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/coreutilsConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY AnyNewerVersion
+    )
+
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/coreutilsConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/coreutilsConfigVersion.cmake"
+        DESTINATION lib/cmake/coreutils
+    )
+
+    # Add uninstall target
+    if(NOT TARGET uninstall)
+        configure_file(
+            "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+            IMMEDIATE @ONLY)
+
+        add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+    endif()
+else()
+    message(STATUS "Install/uninstall targets are disabled on Windows platform")
+    message(STATUS "Use the library directly from the build directory")
+endif()
 
 # Print build summary
 message(STATUS "")
@@ -106,5 +215,12 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Build static library: ${BUILD_STATIC_LIBS}")
 message(STATUS "Build shared library: ${BUILD_SHARED_LIBS}")
 message(STATUS "Build tests: ${BUILD_TESTS}")
+if(NOT WIN32)
+    message(STATUS "Install support: ON")
+    message(STATUS "Uninstall support: ON (make uninstall)")
+else()
+    message(STATUS "Install support: DISABLED (Windows platform)")
+    message(STATUS "Uninstall support: DISABLED (Windows platform)")
+endif()
 message(STATUS "================================================")
 message(STATUS "")

@@ -1,4 +1,4 @@
-# Examples for core-utils library
+# Examples for coreutils library
 
 # AsyncTimer example
 add_executable(async_timer_example async_timer_example.cpp)

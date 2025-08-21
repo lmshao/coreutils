@@ -1,0 +1,58 @@
+if(NOT EXISTS "@CMAKE_BINARY_DIR@/install_manifest.txt")
+    message(FATAL_ERROR "Cannot find install manifest: @CMAKE_BINARY_DIR@/install_manifest.txt")
+endif()
+
+# Set platform-specific path separators
+if(WIN32)
+    set(PATH_SEP "\\")
+else()
+    set(PATH_SEP "/")
+endif()
+
+file(READ "@CMAKE_BINARY_DIR@/install_manifest.txt" files)
+string(REGEX REPLACE "\n" ";" files "${files}")
+
+foreach(file ${files})
+    message(STATUS "Uninstalling $ENV{DESTDIR}${file}")
+    if(IS_SYMLINK "$ENV{DESTDIR}${file}" OR EXISTS "$ENV{DESTDIR}${file}")
+        execute_process(
+            COMMAND "@CMAKE_COMMAND@" -E remove "$ENV{DESTDIR}${file}"
+            OUTPUT_VARIABLE rm_out
+            ERROR_VARIABLE rm_err
+            RESULT_VARIABLE rm_retval
+        )
+        if(NOT "${rm_retval}" STREQUAL "0")
+            message(FATAL_ERROR "Problem when removing $ENV{DESTDIR}${file}: ${rm_err}")
+        endif()
+    else()
+        message(STATUS "File $ENV{DESTDIR}${file} does not exist.")
+    endif()
+endforeach()
+
+# Remove empty directories
+set(DIRS_TO_REMOVE
+    "@CMAKE_INSTALL_PREFIX@/lib/cmake/coreutils"
+    "@CMAKE_INSTALL_PREFIX@/include/coreutils"
+)
+
+foreach(dir ${DIRS_TO_REMOVE})
+    if(EXISTS "${dir}")
+        file(GLOB_RECURSE remaining_files "${dir}/*")
+        if(NOT remaining_files)
+            message(STATUS "Removing empty directory: ${dir}")
+            execute_process(
+                COMMAND "@CMAKE_COMMAND@" -E remove_directory "${dir}"
+                OUTPUT_VARIABLE rm_out
+                ERROR_VARIABLE rm_err
+                RESULT_VARIABLE rm_retval
+            )
+            if(NOT "${rm_retval}" STREQUAL "0")
+                message(WARNING "Problem when removing directory ${dir}: ${rm_err}")
+            endif()
+        else()
+            message(STATUS "Directory ${dir} is not empty, keeping it.")
+        endif()
+    endif()
+endforeach()
+
+message(STATUS "Uninstall completed successfully.")
