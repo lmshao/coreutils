@@ -9,6 +9,8 @@
 
 #include "coreutils/task_queue.h"
 
+#include <algorithm>
+
 #ifdef _WIN32
 #include <processthreadsapi.h>
 #include <windows.h>
