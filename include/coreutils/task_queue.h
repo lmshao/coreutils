@@ -18,7 +18,9 @@
 #include <thread>
 #include <type_traits>
 
-#ifndef _WIN32
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <sys/types.h>
 #include <unistd.h>
 #endif
@@ -333,7 +335,11 @@ private:
     /// @brief The name of the task queue.
     std::string name_;
     /// @brief The thread ID of the task processor thread.
+#ifdef _WIN32
+    DWORD tid_ = 0;
+#else
     pid_t tid_ = -1;
+#endif
     /// @brief Flag to indicate if a task is currently executing.
     bool isTaskExecuting_ = false;
 };
