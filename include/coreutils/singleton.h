@@ -64,6 +64,40 @@ void Singleton<T>::DestroyInstance()
     }
 }
 
+/**
+ * @brief Meyers Singleton pattern implementation.
+ *
+ * This implementation uses the "Initialization On First Use" idiom,
+ * also known as the Meyers Singleton. It's thread-safe in C++11 and later
+ * due to guaranteed thread-safe initialization of local static variables.
+ *
+ * Usage:
+ * class MyClass : public MeyersSingleton<MyClass> {
+ *     friend class MeyersSingleton<MyClass>;
+ * private:
+ *     MyClass() = default;
+ * };
+ *
+ * auto& instance = MyClass::GetInstance();
+ */
+template <typename T>
+class MeyersSingleton : public NonCopyable {
+public:
+    /**
+     * @brief Get the singleton instance.
+     * @return A reference to the singleton instance.
+     */
+    static T &GetInstance()
+    {
+        static T instance;
+        return instance;
+    }
+
+protected:
+    MeyersSingleton() = default;
+    ~MeyersSingleton() = default;
+};
+
 } // namespace lmshao::coreutils
 
 #endif // LMSHAO_CORE_UTILS_SINGLETON_H
