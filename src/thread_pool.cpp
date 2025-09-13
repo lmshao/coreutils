@@ -11,7 +11,7 @@
 #include <string>
 #include <utility>
 
-#include "coreutils/logger.h"
+#include "internal_logger.h"
 
 namespace lmshao::coreutils {
 constexpr size_t POOL_SIZE_MAX = 100;

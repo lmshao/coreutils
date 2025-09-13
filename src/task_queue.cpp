@@ -21,7 +21,7 @@
 #include <unistd.h>
 #endif
 
-#include "coreutils/logger.h"
+#include "internal_logger.h"
 
 namespace lmshao::coreutils {
 TaskQueue::~TaskQueue()

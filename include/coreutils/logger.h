@@ -46,6 +46,45 @@ enum class LogOutput {
 };
 
 /**
+ * @brief Logger Registry - manages logger instances for different modules
+ */
+class LoggerRegistry {
+public:
+    // Dynamic module registration
+    template <typename ModuleTag>
+    static void RegisterModule(const std::string &name)
+    {
+        std::lock_guard<std::mutex> lock(GetRegistryMutex());
+        GetModuleNames()[std::type_index(typeid(ModuleTag))] = name;
+    }
+
+    template <typename ModuleTag>
+    static class Logger &GetLogger();
+
+    template <typename ModuleTag>
+    static class Logger &GetLoggerWithRegistration(const std::string &module_name);
+
+    template <typename ModuleTag>
+    static void InitLogger(LogLevel level = LogLevel::kWarn, LogOutput output = LogOutput::CONSOLE,
+                           const std::string &filename = "");
+
+    template <typename ModuleTag>
+    static std::string GetModuleName()
+    {
+        std::lock_guard<std::mutex> lock(GetRegistryMutex());
+        auto it = GetModuleNames().find(std::type_index(typeid(ModuleTag)));
+        return it != GetModuleNames().end() ? it->second : "Unknown";
+    }
+
+private:
+    static class Logger &GetOrCreateLogger(std::type_index type_id, const std::string &module_name);
+
+    static std::unordered_map<std::type_index, std::unique_ptr<class Logger>> &GetLoggers();
+    static std::unordered_map<std::type_index, std::string> &GetModuleNames();
+    static std::mutex &GetRegistryMutex();
+};
+
+/**
  * @brief Logger class - no longer a template
  */
 class Logger {
@@ -128,206 +167,45 @@ private:
     mutable std::mutex mutex_;
 };
 
-/**
- * @brief Logger Registry - manages logger instances for different modules
- */
-class LoggerRegistry {
-public:
-    // Dynamic module registration
-    template <typename ModuleTag>
-    static void RegisterModule(const std::string &name)
-    {
-        std::lock_guard<std::mutex> lock(GetRegistryMutex());
-        GetModuleNames()[std::type_index(typeid(ModuleTag))] = name;
-    }
-
-    template <typename ModuleTag>
-    static Logger &GetLogger()
-    {
-        static std::once_flag flag;
-        static Logger *logger = nullptr;
-
-        std::call_once(flag, []() {
-            std::string module_name = GetModuleName<ModuleTag>();
-            logger = &GetOrCreateLogger(std::type_index(typeid(ModuleTag)), module_name);
-        });
-
-        return *logger;
-    }
-
-    template <typename ModuleTag>
-    static Logger &GetLoggerWithRegistration(const std::string &module_name)
-    {
-        static std::once_flag flag;
-        static Logger *logger = nullptr;
-
-        std::call_once(flag, [module_name]() {
-            RegisterModule<ModuleTag>(module_name);
-            logger = &GetOrCreateLogger(std::type_index(typeid(ModuleTag)), module_name);
-        });
-
-        return *logger;
-    }
-
-    template <typename ModuleTag>
-    static void InitLogger(LogLevel level =
-#if defined(_DEBUG) || defined(DEBUG) || !defined(NDEBUG)
-                               LogLevel::kDebug,
-#else
-                               LogLevel::kWarn,
-#endif
-                           LogOutput output = LogOutput::CONSOLE, const std::string &filename = "")
-    {
-        auto &logger = GetLogger<ModuleTag>();
-        logger.SetLevel(level);
-        logger.SetOutput(output);
-        if (!filename.empty()) {
-            logger.SetOutputFile(filename);
-        }
-    }
-
-    template <typename ModuleTag>
-    static std::string GetModuleName()
-    {
-        std::lock_guard<std::mutex> lock(GetRegistryMutex());
-        auto it = GetModuleNames().find(std::type_index(typeid(ModuleTag)));
-        return it != GetModuleNames().end() ? it->second : "Unknown";
-    }
-
-private:
-    static Logger &GetOrCreateLogger(std::type_index type_id, const std::string &module_name);
-
-    static std::unordered_map<std::type_index, std::unique_ptr<Logger>> &GetLoggers();
-    static std::unordered_map<std::type_index, std::string> &GetModuleNames();
-    static std::mutex &GetRegistryMutex();
-};
-
-// Module tag for CoreUtils
-struct CoreUtilsModuleTag {};
-
-} // namespace lmshao::coreutils
-
-// Forward declaration for NetworkModuleTag
-namespace lmshao::coreutils {
-
-// Type alias for CoreUtils logger - now uses Registry
-using CoreUtilsLogger = Logger;
-
-// Backward compatibility - get CoreUtils logger instance
-inline Logger &GetCoreUtilsLogger()
+// Template method implementations for LoggerRegistry
+template <typename ModuleTag>
+class Logger &LoggerRegistry::GetLogger()
 {
-    return LoggerRegistry::GetLogger<CoreUtilsModuleTag>();
-}
+    static std::once_flag flag;
+    static Logger *logger = nullptr;
 
-// Convenience macros - now use Registry pattern
-#define LOG_DEBUG(fmt, ...)                                                                                            \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLogger();                                                        \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kDebug)) {                                                   \
-            logger.Log(lmshao::coreutils::LogLevel::kDebug, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);     \
-        }                                                                                                              \
-    } while (0)
-
-#define LOG_INFO(fmt, ...)                                                                                             \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLogger();                                                        \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kInfo)) {                                                    \
-            logger.Log(lmshao::coreutils::LogLevel::kInfo, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);      \
-        }                                                                                                              \
-    } while (0)
-
-#define LOG_WARN(fmt, ...)                                                                                             \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLogger();                                                        \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kWarn)) {                                                    \
-            logger.Log(lmshao::coreutils::LogLevel::kWarn, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);      \
-        }                                                                                                              \
-    } while (0)
-
-#define LOG_ERROR(fmt, ...)                                                                                            \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLogger();                                                        \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kError)) {                                                   \
-            logger.Log(lmshao::coreutils::LogLevel::kError, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);     \
-        }                                                                                                              \
-    } while (0)
-
-#define LOG_FATAL(fmt, ...)                                                                                            \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLogger();                                                        \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kFatal)) {                                                   \
-            logger.Log(lmshao::coreutils::LogLevel::kFatal, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);     \
-        }                                                                                                              \
-    } while (0)
-
-// Initialize CoreUtils logger with smart defaults based on build type
-inline void InitCoreUtilsLogger(LogLevel level =
-#if defined(_DEBUG) || defined(DEBUG) || !defined(NDEBUG)
-                                    LogLevel::kDebug,
-#else
-                                    LogLevel::kWarn,
-#endif
-                                LogOutput output = LogOutput::CONSOLE, const std::string &filename = "")
-{
-    LoggerRegistry::InitLogger<CoreUtilsModuleTag>(level, output, filename);
-}
-
-// Auto-initialization version - ensures logger is initialized before use
-inline Logger &GetCoreUtilsLoggerWithAutoInit()
-{
-    static std::once_flag initFlag;
-    std::call_once(initFlag, []() {
-        LoggerRegistry::RegisterModule<CoreUtilsModuleTag>("CoreUtils");
-        InitCoreUtilsLogger();
+    std::call_once(flag, []() {
+        std::string module_name = GetModuleName<ModuleTag>();
+        logger = &GetOrCreateLogger(std::type_index(typeid(ModuleTag)), module_name);
     });
-    return LoggerRegistry::GetLogger<CoreUtilsModuleTag>();
+
+    return *logger;
 }
 
-// Simplified macros for CoreUtils - with auto-initialization
-#define COREUTILS_LOGD(fmt, ...)                                                                                       \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLoggerWithAutoInit();                                            \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kDebug)) {                                                   \
-            logger.LogWithModuleTag<lmshao::coreutils::CoreUtilsModuleTag>(                                            \
-                lmshao::coreutils::LogLevel::kDebug, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);            \
-        }                                                                                                              \
-    } while (0)
+template <typename ModuleTag>
+class Logger &LoggerRegistry::GetLoggerWithRegistration(const std::string &module_name)
+{
+    static std::once_flag flag;
+    static Logger *logger = nullptr;
 
-#define COREUTILS_LOGI(fmt, ...)                                                                                       \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLoggerWithAutoInit();                                            \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kInfo)) {                                                    \
-            logger.LogWithModuleTag<lmshao::coreutils::CoreUtilsModuleTag>(                                            \
-                lmshao::coreutils::LogLevel::kInfo, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);             \
-        }                                                                                                              \
-    } while (0)
+    std::call_once(flag, [module_name]() {
+        RegisterModule<ModuleTag>(module_name);
+        logger = &GetOrCreateLogger(std::type_index(typeid(ModuleTag)), module_name);
+    });
 
-#define COREUTILS_LOGW(fmt, ...)                                                                                       \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLoggerWithAutoInit();                                            \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kWarn)) {                                                    \
-            logger.LogWithModuleTag<lmshao::coreutils::CoreUtilsModuleTag>(                                            \
-                lmshao::coreutils::LogLevel::kWarn, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);             \
-        }                                                                                                              \
-    } while (0)
+    return *logger;
+}
 
-#define COREUTILS_LOGE(fmt, ...)                                                                                       \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLoggerWithAutoInit();                                            \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kError)) {                                                   \
-            logger.LogWithModuleTag<lmshao::coreutils::CoreUtilsModuleTag>(                                            \
-                lmshao::coreutils::LogLevel::kError, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);            \
-        }                                                                                                              \
-    } while (0)
-
-#define COREUTILS_LOGF(fmt, ...)                                                                                       \
-    do {                                                                                                               \
-        auto &logger = lmshao::coreutils::GetCoreUtilsLoggerWithAutoInit();                                            \
-        if (logger.ShouldLog(lmshao::coreutils::LogLevel::kFatal)) {                                                   \
-            logger.LogWithModuleTag<lmshao::coreutils::CoreUtilsModuleTag>(                                            \
-                lmshao::coreutils::LogLevel::kFatal, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);            \
-        }                                                                                                              \
-    } while (0)
+template <typename ModuleTag>
+void LoggerRegistry::InitLogger(LogLevel level, LogOutput output, const std::string &filename)
+{
+    auto &logger = GetLogger<ModuleTag>();
+    logger.SetLevel(level);
+    logger.SetOutput(output);
+    if (!filename.empty()) {
+        logger.SetOutputFile(filename);
+    }
+}
 
 } // namespace lmshao::coreutils
 

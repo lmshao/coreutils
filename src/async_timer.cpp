@@ -10,7 +10,7 @@
 
 #include <chrono>
 
-#include "coreutils/logger.h"
+#include "internal_logger.h"
 
 namespace lmshao::coreutils {
 
