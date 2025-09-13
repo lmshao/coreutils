@@ -6,11 +6,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "coreutils/object_pool.h"
+#include "lmcore/object_pool.h"
 
-#include "coreutils/data_buffer.h"
+#include "lmcore/data_buffer.h"
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 
 DataBufferPool::DataBufferPool(size_t defaultSize, size_t maxPoolSize) : defaultSize_(defaultSize)
 {
@@ -40,4 +40,4 @@ std::shared_ptr<DataBuffer> DataBufferPool::Acquire(size_t size)
     return buffer;
 }
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore

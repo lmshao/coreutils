@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef LMSHAO_COREUTILS_LOGGER_H
-#define LMSHAO_COREUTILS_LOGGER_H
+#ifndef LMSHAO_LMCORE_LOGGER_H
+#define LMSHAO_LMCORE_LOGGER_H
 
 #include <chrono>
 #include <cstdarg>
@@ -23,7 +23,7 @@
 #include <typeindex>
 #include <unordered_map>
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 
 /**
  * @brief Log levels
@@ -207,6 +207,6 @@ void LoggerRegistry::InitLogger(LogLevel level, LogOutput output, const std::str
     }
 }
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore
 
-#endif // LMSHAO_COREUTILS_LOGGER_H
+#endif // LMSHAO_LMCORE_LOGGER_H

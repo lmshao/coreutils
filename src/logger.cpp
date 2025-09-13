@@ -21,7 +21,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 
 // Global log level
 static LogLevel global_level_ = LogLevel::kInfo;
@@ -193,4 +193,4 @@ LogLevel GetGlobalLogLevel()
     return global_level_;
 }
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore

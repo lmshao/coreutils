@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef LMSHAO_CORE_UTILS_THREAD_POOL_H
-#define LMSHAO_CORE_UTILS_THREAD_POOL_H
+#ifndef LMSHAO_LMCORE_THREAD_POOL_H
+#define LMSHAO_LMCORE_THREAD_POOL_H
 
 #include <atomic>
 #include <condition_variable>
@@ -21,7 +21,7 @@
 #include <unordered_set>
 #include <vector>
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 /// @brief Maximum number of threads allowed.
 constexpr int THREAD_NUM_MAX = 2;
 /// @brief Number of threads to pre-allocate.
@@ -176,6 +176,6 @@ private:
     std::stack<std::shared_ptr<TaskItem>> taskItemPool_;
 };
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore
 
-#endif // LMSHAO_CORE_UTILS_THREAD_POOL_H
+#endif // LMSHAO_LMCORE_THREAD_POOL_H

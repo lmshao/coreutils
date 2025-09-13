@@ -9,10 +9,10 @@
 #include <iostream>
 #include <string>
 
-#include "coreutils/data_buffer.h"
-#include "coreutils/object_pool.h"
+#include "lmcore/data_buffer.h"
+#include "lmcore/object_pool.h"
 
-using namespace lmshao::coreutils;
+using namespace lmshao::lmcore;
 
 int main()
 {

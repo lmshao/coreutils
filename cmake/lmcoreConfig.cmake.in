@@ -1,0 +1,31 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/lmcoreTargets.cmake")
+
+# Provide legacy variables for compatibility
+get_target_property(lmcore_INCLUDE_DIRS lmcore::@PROJECT_NAME@-static INTERFACE_INCLUDE_DIRECTORIES)
+if(NOT lmcore_INCLUDE_DIRS)
+    get_target_property(lmcore_INCLUDE_DIRS lmcore::@PROJECT_NAME@-shared INTERFACE_INCLUDE_DIRECTORIES)
+endif()
+
+# Set found flag
+set(lmcore_FOUND TRUE)
+
+# Provide convenient aliases
+if(TARGET lmcore::@PROJECT_NAME@-static)
+    if(NOT TARGET lmcore::lmcore)
+        add_library(lmcore::lmcore ALIAS lmcore::@PROJECT_NAME@-static)
+    endif()
+    if(NOT TARGET lmcore)
+        add_library(lmcore ALIAS lmcore::@PROJECT_NAME@-static)
+    endif()
+elseif(TARGET lmcore::@PROJECT_NAME@-shared)
+    if(NOT TARGET lmcore::lmcore)
+        add_library(lmcore::lmcore ALIAS lmcore::@PROJECT_NAME@-shared)
+    endif()
+    if(NOT TARGET lmcore)
+        add_library(lmcore ALIAS lmcore::@PROJECT_NAME@-shared)
+    endif()
+endif()
+
+check_required_components(lmcore)

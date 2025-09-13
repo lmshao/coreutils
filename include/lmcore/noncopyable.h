@@ -6,10 +6,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef LMSHAO_CORE_UTILS_NONCOPYABLE_H
-#define LMSHAO_CORE_UTILS_NONCOPYABLE_H
+#ifndef LMSHAO_LMCORE_NONCOPYABLE_H
+#define LMSHAO_LMCORE_NONCOPYABLE_H
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 class NonCopyable {
 protected:
     /**
@@ -40,6 +40,6 @@ public:
     NonCopyable &operator=(NonCopyable &&) = delete;
 };
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore
 
-#endif // LMSHAO_CORE_UTILS_NONCOPYABLE_H
+#endif // LMSHAO_LMCORE_NONCOPYABLE_H

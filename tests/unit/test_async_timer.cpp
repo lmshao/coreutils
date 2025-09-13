@@ -12,9 +12,9 @@
 #include <thread>
 
 #include "../test_framework.h"
-#include "coreutils/async_timer.h"
+#include "lmcore/async_timer.h"
 
-using namespace lmshao::coreutils;
+using namespace lmshao::lmcore;
 
 TEST(AsyncTimerTest, StartAndStop)
 {

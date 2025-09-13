@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "coreutils/data_buffer.h"
+#include "lmcore/data_buffer.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -21,7 +21,7 @@
 #include <mutex>
 #include <vector>
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 constexpr size_t DATA_ALIGN = 8;
 inline static size_t align(size_t len)
 {
@@ -342,4 +342,4 @@ bool DataBuffer::operator==(const DataBuffer &other) const
 
     return memcmp(data_, other.data_, size_) == 0;
 }
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore

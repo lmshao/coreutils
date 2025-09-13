@@ -6,15 +6,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef LMSHAO_CORE_UTILS_SINGLETON_H
-#define LMSHAO_CORE_UTILS_SINGLETON_H
+#ifndef LMSHAO_LMCORE_SINGLETON_H
+#define LMSHAO_LMCORE_SINGLETON_H
 
 #include <memory>
 #include <mutex>
 
 #include "noncopyable.h"
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 template <typename T>
 class Singleton : public NonCopyable {
 public:
@@ -98,6 +98,6 @@ protected:
     ~MeyersSingleton() = default;
 };
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore
 
-#endif // LMSHAO_CORE_UTILS_SINGLETON_H
+#endif // LMSHAO_LMCORE_SINGLETON_H

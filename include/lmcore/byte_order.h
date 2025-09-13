@@ -6,13 +6,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef LMSHAO_COREUTILS_BYTE_ORDER_H
-#define LMSHAO_COREUTILS_BYTE_ORDER_H
+#ifndef LMSHAO_LMCORE_BYTE_ORDER_H
+#define LMSHAO_LMCORE_BYTE_ORDER_H
 
 #include <cstdint>
 #include <type_traits>
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 
 /**
  * @brief Byte order conversion utilities
@@ -242,6 +242,6 @@ private:
     }
 };
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore
 
-#endif // LMSHAO_COREUTILS_BYTE_ORDER_H
+#endif // LMSHAO_LMCORE_BYTE_ORDER_H

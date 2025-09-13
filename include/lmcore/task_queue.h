@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef LMSHAO_CORE_UTILS_TASK_QUEUE_H
-#define LMSHAO_CORE_UTILS_TASK_QUEUE_H
+#ifndef LMSHAO_LMCORE_TASK_QUEUE_H
+#define LMSHAO_LMCORE_TASK_QUEUE_H
 
 #include <condition_variable>
 #include <functional>
@@ -25,7 +25,7 @@
 #include <unistd.h>
 #endif
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 class TaskQueue;
 template <typename T>
 class TaskHandler;
@@ -344,6 +344,6 @@ private:
     bool isTaskExecuting_ = false;
 };
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore
 
-#endif // LMSHAO_CORE_UTILS_TASK_QUEUE_H
+#endif // LMSHAO_LMCORE_TASK_QUEUE_H

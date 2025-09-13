@@ -11,9 +11,9 @@
 #include <iostream>
 #include <thread>
 
-#include "coreutils/async_timer.h"
+#include "lmcore/async_timer.h"
 
-using namespace lmshao::coreutils;
+using namespace lmshao::lmcore;
 
 int main()
 {

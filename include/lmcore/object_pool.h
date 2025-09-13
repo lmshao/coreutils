@@ -6,15 +6,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef LMSHAO_CORE_UTILS_OBJECT_POOL_H
-#define LMSHAO_CORE_UTILS_OBJECT_POOL_H
+#ifndef LMSHAO_LMCORE_OBJECT_POOL_H
+#define LMSHAO_LMCORE_OBJECT_POOL_H
 
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <vector>
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 
 /**
  * @brief Generic object pool template class
@@ -211,6 +211,6 @@ private:
     std::unique_ptr<ObjectPool<DataBuffer>> pool_;
 };
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore
 
-#endif // LMSHAO_CORE_UTILS_OBJECT_POOL_H
+#endif // LMSHAO_LMCORE_OBJECT_POOL_H

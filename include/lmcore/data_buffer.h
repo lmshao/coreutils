@@ -6,15 +6,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef LMSHAO_CORE_UTILS_DATA_BUFFER_H
-#define LMSHAO_CORE_UTILS_DATA_BUFFER_H
+#ifndef LMSHAO_LMCORE_DATA_BUFFER_H
+#define LMSHAO_LMCORE_DATA_BUFFER_H
 
 #include <cstdint>
 #include <cstring>
 #include <memory>
 #include <string>
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 /**
  * @brief A dynamic data buffer for binary data.
  */
@@ -233,6 +233,6 @@ private:
     size_t capacity_ = 0;
 };
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore
 
-#endif // LMSHAO_CORE_UTILS_DATA_BUFFER_H
+#endif // LMSHAO_LMCORE_DATA_BUFFER_H

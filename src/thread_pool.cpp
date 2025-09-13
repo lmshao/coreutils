@@ -6,14 +6,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "coreutils/thread_pool.h"
+#include "lmcore/thread_pool.h"
 
 #include <string>
 #include <utility>
 
 #include "internal_logger.h"
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 constexpr size_t POOL_SIZE_MAX = 100;
 
 ThreadPool::ThreadPool(int preAlloc, int threadsMax, std::string name) : threadsMax_(threadsMax)
@@ -86,9 +86,9 @@ void ThreadPool::Worker()
                 try {
                     fn();
                 } catch (const std::exception &e) {
-                    COREUTILS_LOGE("Task execution failed: %s", e.what());
+                    LMCORE_LOGE("Task execution failed: %s", e.what());
                 } catch (...) {
-                    COREUTILS_LOGE("Task execution failed with unknown exception");
+                    LMCORE_LOGE("Task execution failed with unknown exception");
                 }
             }
 
@@ -112,7 +112,7 @@ void ThreadPool::Worker()
 void ThreadPool::AddTask(const Task &task, const std::string &serialTag)
 {
     if (task == nullptr) {
-        COREUTILS_LOGE("task is nullptr");
+        LMCORE_LOGE("task is nullptr");
         return;
     }
 
@@ -122,7 +122,7 @@ void ThreadPool::AddTask(const Task &task, const std::string &serialTag)
         std::lock_guard<std::mutex> lock(mutex_);
 
         if (shutdown_) {
-            COREUTILS_LOGE("ThreadPool is shutting down, task rejected");
+            LMCORE_LOGE("ThreadPool is shutting down, task rejected");
             return;
         }
 
@@ -206,7 +206,7 @@ void ThreadPool::CreateWorkerThread()
     pthread_setname_np(p->native_handle(), threadName.c_str());
 #endif
     threads_.emplace_back(std::move(p));
-    COREUTILS_LOGD("Created new thread, total: %zu/%d", threads_.size(), threadsMax_);
+    LMCORE_LOGD("Created new thread, total: %zu/%d", threads_.size(), threadsMax_);
 }
 
 std::shared_ptr<ThreadPool::TaskItem> ThreadPool::AcquireTaskItem()
@@ -239,4 +239,4 @@ void ThreadPool::ReleaseTaskItem(std::shared_ptr<TaskItem> item)
         taskItemPool_.push(item);
     }
 }
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore

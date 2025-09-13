@@ -11,9 +11,9 @@
 #include <thread>
 
 #include "../test_framework.h"
-#include "coreutils/task_queue.h"
+#include "lmcore/task_queue.h"
 
-using namespace lmshao::coreutils;
+using namespace lmshao::lmcore;
 
 TEST(TaskQueueTest, Construction)
 {

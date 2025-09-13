@@ -6,13 +6,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "coreutils/async_timer.h"
+#include "lmcore/async_timer.h"
 
 #include <chrono>
 
 #include "internal_logger.h"
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 
 AsyncTimer::AsyncTimer(int threadPoolSize)
 {
@@ -70,12 +70,12 @@ int32_t AsyncTimer::Stop()
 AsyncTimer::TimerId AsyncTimer::ScheduleOnce(const TimerCallback &callback, uint64_t delayMs)
 {
     if (!callback) {
-        COREUTILS_LOGE("Invalid callback for timer");
+        LMCORE_LOGE("Invalid callback for timer");
         return 0;
     }
 
     if (!running_.load()) {
-        COREUTILS_LOGE("Timer is not running");
+        LMCORE_LOGE("Timer is not running");
         return 0;
     }
 
@@ -99,17 +99,17 @@ AsyncTimer::TimerId AsyncTimer::ScheduleRepeating(const TimerCallback &callback,
                                                   uint64_t initialDelayMs)
 {
     if (!callback) {
-        COREUTILS_LOGE("Invalid callback for timer");
+        LMCORE_LOGE("Invalid callback for timer");
         return 0;
     }
 
     if (intervalMs == 0) {
-        COREUTILS_LOGE("Invalid interval for repeating timer");
+        LMCORE_LOGE("Invalid interval for repeating timer");
         return 0;
     }
 
     if (!running_.load()) {
-        COREUTILS_LOGE("Timer is not running");
+        LMCORE_LOGE("Timer is not running");
         return 0;
     }
 
@@ -222,7 +222,7 @@ void AsyncTimer::ExecuteExpiredTimers()
             auto wrappedCallback = [task]() {
                 if (!task->isCancelled) {
                     task->callback();
-                    COREUTILS_LOGD("Executed timer %lu asynchronously", task->id);
+                    LMCORE_LOGD("Executed timer %lu asynchronously", task->id);
                 }
             };
 
@@ -236,7 +236,7 @@ void AsyncTimer::ExecuteExpiredTimers()
         if (!task->isCancelled && task->isRepeating) {
             task->nextExecutionTime = now + task->interval;
             timerTasks_.emplace(task->nextExecutionTime, task);
-            COREUTILS_LOGD("Rescheduled repeating timer %lu", task->id);
+            LMCORE_LOGD("Rescheduled repeating timer %lu", task->id);
         } else if (!task->isRepeating) {
             // Remove one-time timer from map
             timerMap_.erase(task->id);
@@ -257,4 +257,4 @@ size_t AsyncTimer::GetThreadPoolThreadCount() const
     return threadPool_ ? threadPool_->GetThreadCount() : 0;
 }
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore

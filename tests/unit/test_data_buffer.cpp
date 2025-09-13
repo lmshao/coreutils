@@ -16,9 +16,9 @@
 #include <string>
 
 #include "../test_framework.h"
-#include "coreutils/data_buffer.h"
+#include "lmcore/data_buffer.h"
 
-using namespace lmshao::coreutils;
+using namespace lmshao::lmcore;
 
 TEST(DataBufferTest, Construction)
 {

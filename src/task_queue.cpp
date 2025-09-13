@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "coreutils/task_queue.h"
+#include "lmcore/task_queue.h"
 
 #include <algorithm>
 
@@ -23,7 +23,7 @@
 
 #include "internal_logger.h"
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 TaskQueue::~TaskQueue()
 {
     (void)Stop();
@@ -33,7 +33,7 @@ int32_t TaskQueue::Start()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     if (thread_ != nullptr) {
-        COREUTILS_LOGE("Started already, ignore ! [%s]", name_.c_str());
+        LMCORE_LOGE("Started already, ignore ! [%s]", name_.c_str());
         return 0;
     }
 
@@ -70,14 +70,14 @@ int32_t TaskQueue::EnqueueTask(const std::shared_ptr<ITaskHandler> &task, bool c
     constexpr uint64_t MAX_DELAY_US = 10000000ULL; // max delay.
 
     if (task == nullptr) {
-        COREUTILS_LOGE("Enqueue task when taskqueue task is nullptr.[%s]\n", name_.c_str());
+        LMCORE_LOGE("Enqueue task when taskqueue task is nullptr.[%s]\n", name_.c_str());
         return -1;
     }
 
     task->Clear();
 
     if (delayUs >= MAX_DELAY_US) {
-        COREUTILS_LOGE("Enqueue task when taskqueue delayUs[%llu] is >= max delayUs %llu invalid! [%s]",
+        LMCORE_LOGE("Enqueue task when taskqueue delayUs[%llu] is >= max delayUs %llu invalid! [%s]",
                        static_cast<unsigned long long>(delayUs), static_cast<unsigned long long>(MAX_DELAY_US),
                        name_.c_str());
         return -1;
@@ -85,7 +85,7 @@ int32_t TaskQueue::EnqueueTask(const std::shared_ptr<ITaskHandler> &task, bool c
 
     std::unique_lock<std::mutex> lock(mutex_);
     if (isExit_) {
-        COREUTILS_LOGE("Enqueue task when taskqueue is stopped, failed ! [%s]", name_.c_str());
+        LMCORE_LOGE("Enqueue task when taskqueue is stopped, failed ! [%s]", name_.c_str());
         return -1;
     }
 
@@ -98,7 +98,7 @@ int32_t TaskQueue::EnqueueTask(const std::shared_ptr<ITaskHandler> &task, bool c
     uint64_t curTimeNs = static_cast<uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
 
     if (curTimeNs >= UINT64_MAX - delayUs * US_TO_NS) {
-        COREUTILS_LOGE("Enqueue task but timestamp is overflow, why? [%s]", name_.c_str());
+        LMCORE_LOGE("Enqueue task but timestamp is overflow, why? [%s]", name_.c_str());
         return -1;
     }
 
@@ -129,7 +129,7 @@ void TaskQueue::CancelNotExecutedTaskLocked()
 
 void TaskQueue::TaskProcessor()
 {
-    COREUTILS_LOGD("Enter TaskProcessor [%s], tid_: (%lu)\n", name_.c_str(), static_cast<unsigned long>(tid_));
+    LMCORE_LOGD("Enter TaskProcessor [%s], tid_: (%lu)\n", name_.c_str(), static_cast<unsigned long>(tid_));
 
 #ifdef _WIN32
     tid_ = GetCurrentThreadId();
@@ -145,7 +145,7 @@ void TaskQueue::TaskProcessor()
         std::unique_lock<std::mutex> lock(mutex_);
         cond_.wait(lock, [this] { return isExit_ || !taskList_.empty(); });
         if (isExit_) {
-            COREUTILS_LOGD("Exit TaskProcessor [%s], tid_: (%lu)\n", name_.c_str(), static_cast<unsigned long>(tid_));
+            LMCORE_LOGD("Exit TaskProcessor [%s], tid_: (%lu)\n", name_.c_str(), static_cast<unsigned long>(tid_));
             return;
         }
         TaskHandlerItem item = taskList_.front();
@@ -161,7 +161,7 @@ void TaskQueue::TaskProcessor()
         lock.unlock();
 
         if (item.task_ == nullptr || item.task_->IsCanceled()) {
-            COREUTILS_LOGE("task is nullptr or task canceled. [%s]", name_.c_str());
+            LMCORE_LOGE("task is nullptr or task canceled. [%s]", name_.c_str());
             lock.lock();
             isTaskExecuting_ = false;
             lock.unlock();
@@ -171,9 +171,9 @@ void TaskQueue::TaskProcessor()
         try {
             item.task_->Execute();
         } catch (const std::exception &e) {
-            COREUTILS_LOGE("Task execution failed with exception: %s [%s]", e.what(), name_.c_str());
+            LMCORE_LOGE("Task execution failed with exception: %s [%s]", e.what(), name_.c_str());
         } catch (...) {
-            COREUTILS_LOGE("Task execution failed with unknown exception [%s]", name_.c_str());
+            LMCORE_LOGE("Task execution failed with unknown exception [%s]", name_.c_str());
         }
 
         lock.lock();
@@ -184,10 +184,10 @@ void TaskQueue::TaskProcessor()
         }
         int32_t res = EnqueueTask(item.task_, false, item.task_->GetAttribute().periodicTimeUs_);
         if (res != 0) {
-            COREUTILS_LOGE("enqueue periodic task failed:%d, why? [%s]", res, name_.c_str());
+            LMCORE_LOGE("enqueue periodic task failed:%d, why? [%s]", res, name_.c_str());
         }
     }
-    COREUTILS_LOGD("Leave TaskProcessor [%s]", name_.c_str());
+    LMCORE_LOGD("Leave TaskProcessor [%s]", name_.c_str());
 }
 
 bool TaskQueue::IsTaskExecuting()
@@ -196,4 +196,4 @@ bool TaskQueue::IsTaskExecuting()
     return isTaskExecuting_;
 }
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore

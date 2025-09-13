@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef LMSHAO_CORE_UTILS_ASYNC_TIMER_H
-#define LMSHAO_CORE_UTILS_ASYNC_TIMER_H
+#ifndef LMSHAO_LMCORE_ASYNC_TIMER_H
+#define LMSHAO_LMCORE_ASYNC_TIMER_H
 
 #include <atomic>
 #include <chrono>
@@ -20,7 +20,7 @@
 
 #include "thread_pool.h"
 
-namespace lmshao::coreutils {
+namespace lmshao::lmcore {
 
 class AsyncTimer {
 public:
@@ -162,6 +162,6 @@ private:
     std::unique_ptr<ThreadPool> threadPool_;
 };
 
-} // namespace lmshao::coreutils
+} // namespace lmshao::lmcore
 
-#endif // LMSHAO_CORE_UTILS_ASYNC_TIMER_H
+#endif // LMSHAO_LMCORE_ASYNC_TIMER_H

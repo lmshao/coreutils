@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(coreutils VERSION 0.1.1 LANGUAGES CXX)
+project(lmcore VERSION 0.2.0 LANGUAGES CXX)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -40,7 +40,7 @@ message(STATUS "")
 message(STATUS "Usage Examples:")
 message(STATUS "  Debug build:     cmake -DCMAKE_BUILD_TYPE=Debug ..")
 message(STATUS "  User install:    cmake -DINSTALL_TO_USER_LOCAL=ON ..")
-message(STATUS "  Custom prefix:   cmake -DCMAKE_INSTALL_PREFIX=/opt/coreutils ..")
+message(STATUS "  Custom prefix:   cmake -DCMAKE_INSTALL_PREFIX=/opt/lmcore ..")
 message(STATUS "  Tests only:      cmake -DBUILD_STATIC_LIBS=OFF -DBUILD_SHARED_LIBS=OFF ..")
 message(STATUS "")
 message(STATUS "========================================================")
@@ -160,7 +160,7 @@ if(NOT WIN32)
 
     if(INSTALL_TARGETS)
         install(TARGETS ${INSTALL_TARGETS}
-            EXPORT coreutilsTargets
+            EXPORT lmcoreTargets
             ARCHIVE DESTINATION lib
             LIBRARY DESTINATION lib
             RUNTIME DESTINATION bin
@@ -169,30 +169,30 @@ if(NOT WIN32)
     endif()
 
     # Export targets for find_package
-    install(EXPORT coreutilsTargets
-        FILE coreutilsTargets.cmake
-        NAMESPACE coreutils::
-        DESTINATION lib/cmake/coreutils
+    install(EXPORT lmcoreTargets
+        FILE lmcoreTargets.cmake
+        NAMESPACE lmcore::
+        DESTINATION lib/cmake/lmcore
     )
 
     # Create and install config files
     include(CMakePackageConfigHelpers)
     configure_package_config_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/coreutilsConfig.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/coreutilsConfig.cmake"
-        INSTALL_DESTINATION lib/cmake/coreutils
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/lmcoreConfig.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/lmcoreConfig.cmake"
+        INSTALL_DESTINATION lib/cmake/lmcore
     )
 
     write_basic_package_version_file(
-        "${CMAKE_CURRENT_BINARY_DIR}/coreutilsConfigVersion.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/lmcoreConfigVersion.cmake"
         VERSION ${PROJECT_VERSION}
         COMPATIBILITY AnyNewerVersion
     )
 
     install(FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/coreutilsConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/coreutilsConfigVersion.cmake"
-        DESTINATION lib/cmake/coreutils
+        "${CMAKE_CURRENT_BINARY_DIR}/lmcoreConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/lmcoreConfigVersion.cmake"
+        DESTINATION lib/cmake/lmcore
     )
 
     # Add uninstall target

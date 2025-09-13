@@ -31,8 +31,8 @@ endforeach()
 
 # Remove empty directories
 set(DIRS_TO_REMOVE
-    "@CMAKE_INSTALL_PREFIX@/lib/cmake/coreutils"
-    "@CMAKE_INSTALL_PREFIX@/include/coreutils"
+    "@CMAKE_INSTALL_PREFIX@/lib/cmake/lmcore"
+    "@CMAKE_INSTALL_PREFIX@/include/lmcore"
 )
 
 foreach(dir ${DIRS_TO_REMOVE})

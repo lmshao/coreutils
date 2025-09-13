@@ -13,9 +13,9 @@
 #include <vector>
 
 #include "../test_framework.h"
-#include "coreutils/thread_pool.h"
+#include "lmcore/thread_pool.h"
 
-using namespace lmshao::coreutils;
+using namespace lmshao::lmcore;
 
 TEST(ThreadPoolTest, BasicConstruction)
 {
