@@ -25,6 +25,8 @@
 
 namespace lmshao::lmcore {
 
+class Logger;
+
 /**
  * @brief Log levels
  */
@@ -59,10 +61,10 @@ public:
     }
 
     template <typename ModuleTag>
-    static class Logger &GetLogger();
+    static Logger &GetLogger();
 
     template <typename ModuleTag>
-    static class Logger &GetLoggerWithRegistration(const std::string &module_name);
+    static Logger &GetLoggerWithRegistration(const std::string &module_name);
 
     template <typename ModuleTag>
     static void InitLogger(LogLevel level = LogLevel::kWarn, LogOutput output = LogOutput::CONSOLE,
@@ -169,7 +171,7 @@ private:
 
 // Template method implementations for LoggerRegistry
 template <typename ModuleTag>
-class Logger &LoggerRegistry::GetLogger()
+Logger &LoggerRegistry::GetLogger()
 {
     static std::once_flag flag;
     static Logger *logger = nullptr;
@@ -183,7 +185,7 @@ class Logger &LoggerRegistry::GetLogger()
 }
 
 template <typename ModuleTag>
-class Logger &LoggerRegistry::GetLoggerWithRegistration(const std::string &module_name)
+Logger &LoggerRegistry::GetLoggerWithRegistration(const std::string &module_name)
 {
     static std::once_flag flag;
     static Logger *logger = nullptr;
