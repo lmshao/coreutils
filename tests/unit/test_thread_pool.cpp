@@ -148,11 +148,23 @@ TEST(ThreadPoolTest, DynamicThreadCreation)
     }
 
     // Wait for thread creation and task execution
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    EXPECT_TRUE(pool.GetThreadCount() > 1);
+    auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(500);
+    while (std::chrono::steady_clock::now() < deadline) {
+        if (pool.GetThreadCount() > 1) {
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    EXPECT_GT(pool.GetThreadCount(), 1);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    EXPECT_TRUE(max_concurrent.load() >= 2);
+    deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(500);
+    while (std::chrono::steady_clock::now() < deadline) {
+        if (max_concurrent.load() >= 2) {
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    EXPECT_GE(max_concurrent.load(), 2);
 }
 
 TEST(ThreadPoolTest, QueueSizeTracking)
