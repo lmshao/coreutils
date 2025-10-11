@@ -16,9 +16,11 @@
 #include <windows.h>
 #else
 #include <pthread.h>
-#include <sys/syscall.h>
 #include <sys/types.h>
 #include <unistd.h>
+#if defined(__linux__)
+#include <sys/syscall.h>
+#endif
 #endif
 
 #include "internal_logger.h"
@@ -136,9 +138,22 @@ void TaskQueue::TaskProcessor()
     std::wstring wideName(name_.begin(), name_.end());
     SetThreadDescription(GetCurrentThread(), wideName.c_str());
 #else
+#if defined(__APPLE__)
+    constexpr uint32_t nameSizeMax = 63;
+    uint64_t tid64 = 0;
+    if (pthread_threadid_np(nullptr, &tid64) == 0) {
+        tid_ = static_cast<pid_t>(tid64);
+    } else {
+        tid_ = 0;
+    }
+    pthread_setname_np(name_.substr(0, nameSizeMax).c_str());
+#elif defined(__linux__)
     constexpr uint32_t nameSizeMax = 15;
     tid_ = static_cast<pid_t>(syscall(SYS_gettid));
     pthread_setname_np(pthread_self(), name_.substr(0, nameSizeMax).c_str());
+#else
+    tid_ = static_cast<pid_t>(::getpid());
+#endif
 #endif
 
     while (true) {

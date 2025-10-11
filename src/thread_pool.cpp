@@ -11,6 +11,10 @@
 #include <string>
 #include <utility>
 
+#if !defined(_WIN32)
+#include <pthread.h>
+#endif
+
 #include "internal_logger.h"
 
 namespace lmshao::lmcore {
@@ -199,12 +203,21 @@ size_t ThreadPool::GetThreadCount() const
 
 void ThreadPool::CreateWorkerThread()
 {
-    auto p = std::make_unique<std::thread>(&ThreadPool::Worker, this);
-#ifndef _WIN32
     size_t threadIndex = threads_.size();
     std::string threadName = threadName_ + "-" + std::to_string(threadIndex);
-    pthread_setname_np(p->native_handle(), threadName.c_str());
+
+    auto workerEntry = [this, threadName]() {
+#if !defined(_WIN32)
+#if defined(__APPLE__)
+        pthread_setname_np(threadName.c_str());
+#else
+        pthread_setname_np(pthread_self(), threadName.c_str());
 #endif
+#endif
+        this->Worker();
+    };
+
+    auto p = std::make_unique<std::thread>(std::move(workerEntry));
     threads_.emplace_back(std::move(p));
     LMCORE_LOGD("Created new thread, total: %zu/%d", threads_.size(), threadsMax_);
 }

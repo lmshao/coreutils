@@ -74,7 +74,10 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "/MD /O2 /DNDEBUG /DRELEASE")
 else()
     # GCC/Clang flags for Linux/Unix
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error -Wno-format-truncation")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format-truncation")
+    endif()
     # Debug-specific flags for GCC/Clang
     set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -DDEBUG")
     # Release-specific flags for GCC/Clang
